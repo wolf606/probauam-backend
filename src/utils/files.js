@@ -2,7 +2,7 @@ const { APP_URL } = require("../../config");
 const fs = require('fs');
 
 function getFullPath(filePath) {
-    return `${APP_URL}/${filePath}`;
+    return `${APP_URL}/api/v1/${filePath}`;
 };
 
 function getFileData(name, path) {

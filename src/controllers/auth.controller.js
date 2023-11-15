@@ -76,7 +76,7 @@ async function activateAccount(req, res) {
     const { uid, token } = req.params;
     
     const id = Buffer.from(uid, 'base64').toString('ascii');
-    
+    console.log("token", token);
     decodeToken(token)
     .then((payload) => {
         if (payload.id === id) {
@@ -186,7 +186,7 @@ async function activateAccount(req, res) {
     .catch((err) => {
         res.status(401).send({
             status: "error",
-            message: "Invalid token."
+            message: "Cannot decode token."
         });
     });
 }

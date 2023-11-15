@@ -22,16 +22,6 @@ const validateUserSignIn = [
             }
         }
     ),
-    check("email").custom(
-        (value, { req, loc, path }) => {
-            //Check if email is from a valid domain
-            if (value.split("@")[1] !== "autonoma.edu.co") {
-                throw new Error("email is not from a valid domain.");
-            } else {
-                return value;
-            }
-        }
-    ),
 
     check("password", "password field is required").exists(),
     check("password", "password field must be a string").isString(),
@@ -66,16 +56,6 @@ const validateUserResetPwdEmail = [
                 console.error("An error occurred:", error);
                 // You can choose to return a rejection or handle the error differently
                 return Promise.reject("DB error");
-            }
-        }
-    ),
-    check("email").custom(
-        (value, { req, loc, path }) => {
-            //Check if email is from a valid domain
-            if (value.split("@")[1] !== "autonoma.edu.co") {
-                throw new Error("email is not from a valid domain.");
-            } else {
-                return value;
             }
         }
     ),

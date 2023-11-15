@@ -21,16 +21,6 @@ const validateUserStore = [
             }
         }
     ),
-    check("email").custom(
-        (value, { req, loc, path }) => {
-            //Check if email is from a valid domain
-            if (value.split("@")[1] !== "autonoma.edu.co") {
-                throw new Error("email is not from a valid domain.");
-            } else {
-                return value;
-            }
-        }
-    ),
 
     check("password", "password field is required").exists(),
     check("password", "password field must be a string").isString(),
@@ -67,20 +57,17 @@ const validateUserUpdate = [
             }
         }
     ).optional(),
-    check("email").custom(
-        (value, { req, loc, path }) => {
-            //Check if email is from a valid domain
-            if (value.split("@")[1] !== "autonoma.edu.co") {
-                throw new Error("email is not from a valid domain.");
-            } else {
-                return value;
-            }
-        }
-    ).optional(),
 
     check("password", "password field must be a string").isString().optional(),
     check("password", "password field cannot be empty").not().isEmpty().optional(),
     check("password", "password field needs 6 or more characters").isLength({ min: 6 }).optional(),
+
+    check("role", "role field must be an array").isArray().optional(),
+    check("role")
+    .custom((value) => {
+        return value.every(role => Object.values(User.Roles).includes(role));
+    })
+    .withMessage("role field has no valid value.").optional(),
 
     check("active", "active field must be a boolean").isBoolean().optional(),
 

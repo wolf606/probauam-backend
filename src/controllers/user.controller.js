@@ -54,7 +54,7 @@ async function store(req, res) {
         new User({
             email,
             password: hash,
-            role: User.Roles.user
+            role: [User.Roles.user]
         })
         .save()
         .then(async (user) => {

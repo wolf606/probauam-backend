@@ -8,7 +8,7 @@ const createAccessToken = (user) => {
         role: user.role,
     };
     return new Promise((resolve, reject) => {
-        jwt.sign(payload, SECRET_KEY, { algorithm: "HS256", expiresIn: "10s" }, (err, token) => {
+        jwt.sign(payload, SECRET_KEY, { algorithm: "HS256", expiresIn: "24h" }, (err, token) => {
             if (err) {
                 reject(err);
             } else {

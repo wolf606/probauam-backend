@@ -61,7 +61,7 @@ async function ensureAuth(req, res, next) {
     .catch((err) => {
       res.status(401).send({
         status: "error",
-        message: "Invalid token."
+        message: "Token is not associated."
       });
     })
   }

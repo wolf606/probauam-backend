@@ -106,22 +106,28 @@ async function update(req, res) {
                     }
                     
                 }
+
+                const params = req.params;
+                User.findByIdAndUpdate({ _id: params.id }, { profile: dict }, { new: true })
+                .then((user) => {
+                    if (user === null) {
+                        res.status(404).send({
+                            status: "error",
+                            message: "User not found. Cannot edit profile."
+                        });
+                    } else {
+                        res.status(200).send({
+                            status: "ok",
+                            data: userResource(user)
+                        });
+                    }
+                })
+            } else {
+                res.status(404).send({
+                    status: "error",
+                    message: "User has no profile. Cannot edit profile."
+                });
             }
-            const params = req.params;
-            User.findByIdAndUpdate({ _id: params.id }, { profile: dict }, { new: true })
-            .then((user) => {
-                if (user === null) {
-                    res.status(404).send({
-                        status: "error",
-                        message: "User not found. Cannot edit profile."
-                    });
-                } else {
-                    res.status(200).send({
-                        status: "ok",
-                        data: userResource(user)
-                    });
-                }
-            })
         }
     })
 }

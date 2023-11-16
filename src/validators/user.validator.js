@@ -102,9 +102,24 @@ const validateUserDestroy = [
     }
 ];
 
+const validateUserIndex = [
+    //Check if cargo is valid
+    check("role").optional().isIn(Object.values(User.Roles)),
+    //Check if active is valid
+    check("active").optional().isBoolean(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
 module.exports = {
     validateUserStore,
     validateUserUpdate,
     validateUserShow,
-    validateUserDestroy
+    validateUserDestroy,
+    validateUserIndex
 }

@@ -25,7 +25,7 @@ api.post("/:id/profile", upload.single('avatar'), ensureAuth, (req, res, next) =
     } catch (err) {
         res.status(500).send({
             status: "error",
-            message: "User store failed. Cannot parse address."
+            message: "User profile store failed. Cannot parse address."
         });
         console.debug(err);
         return;
@@ -41,7 +41,7 @@ api.put("/:id/profile", upload.single('avatar'), ensureAuth, (req, res, next) =>
     } catch (err) {
         res.status(500).send({
             status: "error",
-            message: "User update failed. Cannot parse address."
+            message: "User profile update failed. Cannot parse address."
         });
         console.debug(err);
         return;

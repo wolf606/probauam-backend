@@ -5,7 +5,11 @@ const { decodeToken } = require("../utils/jwt");
 const { activationEmail } = require("../templates/mail/mail.templates");
 
 async function index(req, res) {
-    User.find()
+    const query = req.query;
+    search = {};
+    if (query.role !== undefined) search.role = query.role;
+    if (query.active !== undefined) search.active = query.active;
+    User.find(search)
     .then((users) => {
         res.status(200).send({
             status: "ok",
@@ -170,15 +174,15 @@ async function destroy(req, res) {
 async function wipe(req, res) {
     const {
         id,
-        name,
-        lastname,
-        email
+        email,
+        active,
+        role
     } = req.body;
     var dict = {};
     if (id !== undefined) dict._id = id;
-    if (name !== undefined) dict.name = name;
-    if (lastname !== undefined) dict.lastname = lastname;
     if (email !== undefined) dict.email = email;
+    if (active !== undefined) dict.active = active;
+    if (role !== undefined) dict.role = role;
     
     if (Object.keys(dict).length > 0){
         User.deleteMany(dict)

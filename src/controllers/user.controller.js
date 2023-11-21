@@ -1,4 +1,6 @@
 const User = require("../models/user.model");
+const UserToken = require("../models/user-token.model");
+const EntityUser = require("../models/entity-user.model");
 const { hashPassword } = require("../utils/pwd");
 const { userResource } = require("../resources/user.resource");
 const { decodeToken } = require("../utils/jwt");
@@ -156,9 +158,29 @@ async function destroy(req, res) {
                 message: "User not found."
             });
         } else {
-            res.status(200).send({
-                status: "ok",
-                data: userResource(user)
+            UserToken.deleteMany({ user_ObjectId: user._id })
+            .then((userTokens) => {
+                EntityUser.deleteMany({ user_id: user._id })
+                .then((entityUsers) => {
+                    res.status(200).send({
+                        status: "ok",
+                        data: userResource(user)
+                    });
+                })
+                .catch((err) => {
+                    res.status(500).send({
+                        status: "error",
+                        message: "User destroy failed. Cannot delete entity users."
+                    });
+                    console.debug(err);
+                });
+            })
+            .catch((err) => {
+                res.status(500).send({
+                    status: "error",
+                    message: "User destroy failed. Cannot delete user tokens."
+                });
+                console.debug(err);
             });
         }
     })
@@ -193,9 +215,29 @@ async function wipe(req, res) {
                     message: "Users not found."
                 });
             } else {
-                res.status(200).send({
-                    status: "ok",
-                    data: userResource(users)
+                UserToken.deleteMany({ user_ObjectId: { $in: users.map((user) => user._id) } })
+                .then((userTokens) => {
+                    EntityUser.deleteMany({ user_id: { $in: users.map((user) => user._id) } })
+                    .then((entityUsers) => {
+                        res.status(200).send({
+                            status: "ok",
+                            data: userResource(users)
+                        });
+                    })
+                    .catch((err) => {
+                        res.status(500).send({
+                            status: "error",
+                            message: "User wipe failed. Cannot delete entity users."
+                        });
+                        console.debug(err);
+                    });
+                })
+                .catch((err) => {
+                    res.status(500).send({
+                        status: "error",
+                        message: "User wipe failed. Cannot delete user tokens."
+                    });
+                    console.debug(err);
                 });
             }
         })

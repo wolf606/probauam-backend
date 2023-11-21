@@ -1,8 +1,15 @@
 const mongoose = require("mongoose");
 const FileSchema = require("./file.model");
 
+const Platforms = {
+    windows: "Windows",
+    iphone: "iPhone",
+    android: "Android",
+    mac: "Mac"
+};
+
 const PlatformSchema = mongoose.Schema({
-    pla_name: { required: true, type: String, enum: ["Windows", "iPhone", "Android", "Mac"] },
+    pla_name: { required: true, type: String, enum: Object.values(Platforms) },
     pla_versio: { required: true, type: String },
     pla_archit: { required: true, type: String },
     pla_downlo: { required: true, type: String },

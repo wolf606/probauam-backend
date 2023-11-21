@@ -40,7 +40,6 @@ const validateEntityStore = [
     //Check if user exists
     check("userId").custom(
         async (value, { req, loc, path }) => {
-            console.log("userId: ", req.params.userId)
             try {
                 const user = await User.exists({ _id: req.params.userId })
                 if (user == null) {

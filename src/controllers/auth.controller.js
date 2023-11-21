@@ -8,7 +8,7 @@ async function signIn(req, res) {
     const email = req.body.email.toLowerCase();
     const password = req.body.password;
     
-    User.findOne({ email: email }, 'password active role')
+    User.findOne({ email: email }, 'email password active role profile')
     .then(async (user) => {
         if (user !== null) {
             if (user.active) {
@@ -76,7 +76,6 @@ async function activateAccount(req, res) {
     const { uid, token } = req.params;
     
     const id = Buffer.from(uid, 'base64').toString('ascii');
-    console.log("token", token);
     decodeToken(token)
     .then((payload) => {
         if (payload.id === id) {
@@ -245,7 +244,6 @@ async function resetPassword(req, res) {
     const { password } = req.body;
     
     const id = Buffer.from(uid, 'base64').toString('ascii');
-    
     decodeToken(token)
     .then((payload) => {
         if (payload.id === id) {

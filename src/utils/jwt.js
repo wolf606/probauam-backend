@@ -1,14 +1,27 @@
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../../config");
 const UserToken = require("../models/user-token.model");
+const { getFullPath } = require("../utils/files");
 
 const createAccessToken = (user) => {
-    const payload = {
+    var avatarUrl = "";
+    var names = "";
+    if (user.profile) {
+        if (user.profile.pro_avatar) {
+            avatarObj = user.profile.pro_avatar
+            avatarUrl = getFullPath(avatarObj.fil_path, avatarObj.fil_filnam);
+        }
+        names = user.profile.pro_nombre;
+    }
+    var payload = {
         id: user._id,
+        email: user.email,
         role: user.role,
+        avatar: avatarUrl,
+        names,
     };
     return new Promise((resolve, reject) => {
-        jwt.sign(payload, SECRET_KEY, { algorithm: "HS256", expiresIn: "24h" }, (err, token) => {
+        jwt.sign(payload, SECRET_KEY, { algorithm: "HS512", expiresIn: "24h" }, (err, token) => {
             if (err) {
                 reject(err);
             } else {

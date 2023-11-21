@@ -11,7 +11,7 @@ async function connectToDatabase() {
     .then(
         (msg) => {
             console.log("Connected to cluster.");
-            app.listen(config.APP_PORT, config.APP_HOST, () => {
+            app.listen(config.APP_PORT, () => {
                 console.log("Server running on: ");
                 console.log(`${config.APP_URL}/api/v1/`)
             });

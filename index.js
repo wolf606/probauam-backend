@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const app = require("./app");
 const config = require("./config");
 
-const DB_URI = `mongodb+srv://${config.DB_USER}:${config.DB_PASSWORD}@${config.DB_HOST}/probauam/?retryWrites=true&w=majority`;
+const DB_URI = `mongodb+srv://${config.DB_USER}:${config.DB_PASSWORD}@${config.DB_HOST}/?retryWrites=true&w=majority`;
 
 async function connectToDatabase() {
     console.debug("Mongo Cluster: ", DB_URI);
@@ -11,7 +11,7 @@ async function connectToDatabase() {
     .then(
         (msg) => {
             console.log("Connected to cluster.");
-            app.listen(config.APP_PORT, config.APP_HOST, () => {
+            app.listen(config.APP_PORT, () => {
                 console.log("Server running on: ");
                 console.log(`${config.APP_URL}/api/v1/`)
             });

@@ -225,6 +225,9 @@ $RECYCLE.BIN/
 !.yarn/sdks
 !.yarn/versions
 
+# Multer temp files
+uploads/
+
 # if you are NOT using Zero-installs, then:
 # comment the following lines
 !.yarn/cache

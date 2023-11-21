@@ -4,6 +4,7 @@ module.exports = {
     SECRET_KEY: process.env.SECRET_KEY,
     APP_HOST: process.env.APP_HOST,
     APP_PORT: process.env.APP_PORT,
+    PORT: process.env.PORT,
     APP_URL: process.env.APP_HTTPS === 'True' ? `https://${process.env.APP_HOST}:${process.env.APP_PORT}` : `http://${process.env.APP_HOST}:${process.env.APP_PORT}`,
     FRONTEND_HOST: process.env.FRONTEND_HOST,
     FRONTEND_PORT: process.env.FRONTEND_PORT,

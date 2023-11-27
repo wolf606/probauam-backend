@@ -2,6 +2,7 @@ const User = require("../models/user.model");
 const Entity = require("../models/entity.model");
 const Admission = require("../models/admission.model");
 const {admissionResource} = require("../resources/admission.resource");
+const { search } = require("../routes/entity.route");
 
 /*
 
@@ -122,7 +123,7 @@ const admissionResource = (data) => {
 async function indexUserAdmissions(req, res) {
     const { userId } = req.params;
     const query = req.query;
-    search = {};
+    var search = {};
     
     if (query.active !== undefined) {
         if (query.active === "true") {
@@ -173,6 +174,63 @@ async function indexUserAdmissions(req, res) {
         console.debug(err);
     });
 };
+
+async function indexProfessionalAdmissions(req, res) {
+    const { entityId, profId } = req.params;
+    const { active } = req.query;
+
+    //active admissions means that the discharge date adm_disdat is null or undefined
+    var search = {};
+    search.adm_entity = entityId;
+    search.adm_profes = profId;
+
+    if (active !== undefined) {
+        if (active === "true") {
+            search.adm_disdat = null;
+        } else if (active === "false") {
+            search.adm_disdat = { $ne: null };
+        }
+    }
+
+    Admission.find(search)
+    .then((admissions) => {
+        //For each admission find the entity, professional and patient data
+        const promises = admissions.map(async (admission) => {
+            const entity = await Entity.findById(admission.adm_entity);
+            const professional = await User.findById(admission.adm_profes);
+            const patient = await User.findById(admission.adm_patien);
+            return admissionResource({
+                ...admission._doc,
+                entity,
+                professional,
+                patient
+            });
+        });
+        Promise.all(promises)
+        .then((admissions) => {
+            res.send({
+                status: "ok",
+                message: "Admission index success.",
+                data: admissions
+            });
+        })
+        .catch((err) => {
+            res.status(500).send({
+                status: "error",
+                message: "Admission index failed. DB error."
+            });
+            console.debug(err);
+        });
+    })
+    .catch((err) => {
+        res.status(500).send({
+            status: "error",
+            message: "Admission index failed. DB error."
+        });
+        console.debug(err);
+    });
+};
+
 
 async function show(req, res) {
     const params = req.params;
@@ -226,6 +284,7 @@ async function destroy(req, res) {
 module.exports = {
     storeUserAdmission,
     indexUserAdmissions,
+    indexProfessionalAdmissions,
     show,
     update,
     destroy

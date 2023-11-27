@@ -10,6 +10,7 @@ const profileRoutes = require("./src/routes/profile.route");
 const entityRoutes = require("./src/routes/entity.route");
 const entityUserRoutes = require("./src/routes/entity-user.route");
 const admissionRoutes = require("./src/routes/admission.route");
+const activityRoutes = require("./src/routes/activity.route");
 
 const app = express();
 app.use(cors());
@@ -24,6 +25,7 @@ app.use("/api/v1/users", profileRoutes);
 app.use("/api/v1/users", entityRoutes);
 app.use("/api/v1/entities", entityUserRoutes);
 app.use("/api/v1/users", admissionRoutes);
+app.use("/api/v1/activities", activityRoutes);
 
 app.use(function(req, res) {
     res.status(404).send(

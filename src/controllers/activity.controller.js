@@ -1,6 +1,8 @@
 const Activity = require("../models/activity.model");
+const Admission = require("../models/admission.model");
 const {activityResource} = require("../resources/activity.resource");
 const crypto = require('crypto');
+const { createActivityToken, decodeToken } = require("../utils/jwt");
 
 /*
 
@@ -90,6 +92,104 @@ async function store(req, res) {
     }
 };
 
+
+/*
+
+const AdmissionSchema = mongoose.Schema({
+    adm_patien: { required: true, type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    adm_profes: { required: true, type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    adm_entity: { required: true, type: mongoose.Schema.Types.ObjectId, ref: "Entity" },
+    adm_admdat: { required: true, type: Date },
+    adm_disdat: { type: Date, default: null },
+    adm_compan: CompanionSchema,
+    adm_calibr: CalibrationSchema,
+    adm_sde: SocioDemographicSchema,
+    adm_can: CaracteristicasAntropometricasSchema,
+}, { timestamps: true });
+
+*/
+async function getActivtyToken(req, res) {
+    const { activityId, admissionId } = req.params;
+    const token = req.headers.authorization.replace(/['"]+/g, "");
+    decodeToken(token)
+    .then((payload) => {
+        //Check role array has professional
+        if (payload.role.includes("professional")) {
+            console.log("activityId", activityId);
+            Activity.findOne({ _id: activityId })
+            .then((activity) => {
+                if (activity !== null) {
+                    //check if admission is active because adm_disdat is null
+                    Admission.findOne({ _id: admissionId, adm_disdat: null })
+                    .then((admission) => {
+                        if (admission !== null) {
+                            //check if admission is from professional
+                            if (admission.adm_profes.toString() === payload.id) {
+                                createActivityToken(activity.act_key, payload.id, activityId, admissionId)
+                                .then((token) => {
+                                    res.status(200).send({
+                                        status: "ok",
+                                        activityToken: token
+                                    });
+                                })
+                                .catch((err) => {
+                                    res.status(500).send({
+                                        status: "error",
+                                        message: "Activity admission token failed."
+                                    });
+                                    console.debug(err);
+                                });
+                            } else {
+                                res.status(403).send({
+                                    status: "error",
+                                    message: "Not authorized"
+                                });
+                            }
+                        } else {
+                            res.status(404).send({
+                                status: "error",
+                                message: "Admission not found."
+                            });
+                        }
+                    })
+                    .catch((err) => {
+                        res.status(500).send({
+                            status: "error",
+                            message: "Activity admission token failed."
+                        });
+                        console.debug(err);
+                    });
+                } else {
+                    res.status(404).send({
+                        status: "error",
+                        message: "Activity not found."
+                    });
+                }
+            })
+            .catch((err) => {
+                res.status(500).send({
+                    status: "error",
+                    message: "Activity admission token failed."
+                });
+                console.debug(err);
+            });
+        } else {
+            res.status(403).send({
+                status: "error",
+                message: "Not authorized"
+            });
+        }
+    })
+    .catch((err) => {
+        res.status(401).send({
+            status: "error",
+            message: "Unauthenticated"
+        });
+        console.debug(err);
+    });
+}
+
 module.exports = {
-    store
+    store,
+    getActivtyToken
 }

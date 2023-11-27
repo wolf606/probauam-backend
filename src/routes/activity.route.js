@@ -6,14 +6,24 @@ const storageLoc = 'uploads/games/';
 const upload = multer({ dest: storageLoc });
 
 const {
-    store
+    store,
+    getActivtyToken
 } = require("../controllers/activity.controller");
 
 const {
-    validateActivityStore
+    storeScoreboard
+} = require("../controllers/scoreboard.controller");
+
+const {
+    validateActivityStore,
+    validateActivityToken
 } = require("../validators/activity.validator");
 
-const { ensureAuth } = require("../middleware/user.auth");
+const {
+    validateScoreboardStore
+} = require("../validators/scoreboard.validator");
+
+const { ensureAuth, ensureAuthActivity } = require("../middleware/user.auth");
 
 api.post("/", upload.array('gallery'), ensureAuth, (req, res, next) => {
     try {
@@ -30,5 +40,9 @@ api.post("/", upload.array('gallery'), ensureAuth, (req, res, next) => {
     }
     next();
 }, validateActivityStore, store);
+
+api.get("/:activityId/admissions/:admissionId/token", ensureAuth, validateActivityToken, getActivtyToken);
+
+api.post("/:activityId/scoreboards", ensureAuthActivity, validateScoreboardStore, storeScoreboard);
 
 module.exports = api;

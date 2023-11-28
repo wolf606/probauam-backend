@@ -12,6 +12,10 @@ const {
 } = require("../controllers/entity.controller");
 
 const {
+    indexProfessionalAdmissions
+} = require("../controllers/admission.controller");
+
+const {
     validateUserEntitiesStore,
     validateUserEntitiesUpdate,
     validateUserEntitiesDelete
@@ -27,5 +31,7 @@ api.post("/:entityId/users/:userId", ensureAuth, validateUserEntitiesStore, stor
 api.put("/:entityId/users/:userId", ensureAuth, validateUserEntitiesUpdate, update);
 api.get("/:entityId/users", ensureAuth, validateEntityIndexUsers, index);
 api.delete("/:entityId/users/:userId", ensureAuth, validateUserEntitiesDelete, destroy);
+
+api.get("/:entityId/professional/:profId/admissions", ensureAuth, indexProfessionalAdmissions);
 
 module.exports = api;

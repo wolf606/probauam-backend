@@ -49,6 +49,36 @@ const createAccessToken = (user) => {
     });
 };
 
+const createActivityToken = (key, userId, activityId, admissionId) => {
+    
+    var payload = {
+        userId,
+        activityId,
+        admissionId,
+    };
+    return new Promise((resolve, reject) => {
+        jwt.sign(payload, key, { algorithm: "HS512", expiresIn: "6h" }, (err, token) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(token);
+            }
+        });
+    });
+};
+
+const decodeActivityToken = (token, key) => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, key, (err, decoded) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(decoded);
+            }
+        });
+    });
+}
+
 const decodeToken = (token) => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, SECRET_KEY, (err, decoded) => {
@@ -71,4 +101,6 @@ const decodeToken = (token) => {
 module.exports = {
     createAccessToken,
     decodeToken,
+    createActivityToken,
+    decodeActivityToken
 };

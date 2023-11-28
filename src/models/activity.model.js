@@ -27,7 +27,9 @@ const ActivitySchema = mongoose.Schema({
     act_datash: { required: true, type: String },
     act_platfo: [PlatformSchema],
     act_galler: [FileSchema],
+    act_key: { required: true, type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Activity", ActivitySchema);
 module.exports.PlatformSchema = PlatformSchema;
+module.exports.Platforms = Platforms;

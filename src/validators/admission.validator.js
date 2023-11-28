@@ -1,6 +1,7 @@
 const { check, validationResult } = require("express-validator");
 const User = require("../models/user.model");
 const Entity = require("../models/entity.model");
+const Admission = require("../models/admission.model");
 const { 
     Genero,
     EstadoCivil,
@@ -209,7 +210,36 @@ const validateUserStoreAdmissions = [
     }
 ];
 
+const validateShowAdmission = [
+    check("admissionId", "admissionId field must be a valid ObjectId").isMongoId(),
+    //Check if admission exists
+    check("admissionId").custom(
+        async (value, { req, loc, path }) => {
+            try {
+                const admission = await Admission.exists({ _id: req.params.admissionId })
+                if (admission == null) {
+                    return Promise.reject("admissionId is not registered");
+                }
+            } catch (error) {
+                // Handle the error
+                console.error("An error occurred:", error);
+                // You can choose to return a rejection or handle the error differently
+                return Promise.reject("DB error");
+            }
+        }
+    ),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
 module.exports = {
     validateUserIndexAdmissions,
-    validateUserStoreAdmissions
+    validateUserStoreAdmissions,
+    validateShowAdmission
 }

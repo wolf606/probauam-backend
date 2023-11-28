@@ -2,7 +2,6 @@ const User = require("../models/user.model");
 const Entity = require("../models/entity.model");
 const Admission = require("../models/admission.model");
 const {admissionResource} = require("../resources/admission.resource");
-const { search } = require("../routes/entity.route");
 
 /*
 
@@ -233,8 +232,31 @@ async function indexProfessionalAdmissions(req, res) {
 
 
 async function show(req, res) {
-    const params = req.params;
-    
+    const { admissionId } = req.params;
+
+    Admission.findById(admissionId)
+    .then(async (admission) => {
+        const entity = await Entity.findById(admission.adm_entity);
+        const professional = await User.findById(admission.adm_profes);
+        const patient = await User.findById(admission.adm_patien);
+        res.send({
+            status: "ok",
+            message: "Admission show success.",
+            data: admissionResource({
+                ...admission._doc,
+                entity,
+                professional,
+                patient
+            })
+        });
+    })
+    .catch((err) => {
+        res.status(500).send({
+            status: "error",
+            message: "Admission show failed. DB error."
+        });
+        console.debug(err);
+    });
 }
 
 async function storeUserAdmission(req, res) {

@@ -56,7 +56,7 @@ async function storeScoreboard(req, res) {
         })
         .then((scoreboard) => {
             res.status(201).send({
-                status: "success",
+                status: "ok",
                 data: scoreboardResource(scoreboard)
             });
         })
@@ -70,6 +70,62 @@ async function storeScoreboard(req, res) {
     }
 };
 
+async function indexScoreboard(req, res) {
+    const { activityId, admissionId } = req.params;
+    //given activityId and admissionId, sort all scoreboards by sco_start
+    Scoreboard.find({
+        activi_id: activityId,
+        admiss_id: admissionId
+    })
+    .sort({ sco_start: -1 })
+    .then((scoreboards) => {
+        res.status(200).send({
+            status: "ok",
+            data: scoreboardResource(scoreboards)
+        });
+    })
+    .catch((err) => {
+        res.status(500).send({
+            status: "error",
+            message: "Scoreboard index failed."
+        });
+        console.debug(err);
+    });
+}
+
+async function retriveBestScore(req, res) {
+    const { activityId, admissionId } = req.params;
+    //given activityId and admissionId, find the best score
+    Scoreboard.find({
+        activi_id: activityId,
+        admiss_id: admissionId
+    })
+    .sort({ sco_score: -1 })
+    .limit(1)
+    .then((scoreboard) => {
+        if (scoreboard.length > 0) {
+            res.status(200).send({
+                status: "ok",
+                data: scoreboardResource(scoreboard[0])
+            });
+        } else {
+            res.status(200).send({
+                status: "ok",
+                data: null
+            });
+        }
+    })
+    .catch((err) => {
+        res.status(500).send({
+            status: "error",
+            message: "Scoreboard retrive failed."
+        });
+        console.debug(err);
+    });
+}
+
 module.exports = {
-    storeScoreboard
+    storeScoreboard,
+    retriveBestScore,
+    indexScoreboard
 }

@@ -30,6 +30,58 @@ const ActivitySchema = mongoose.Schema({
 
 */
 
+async function index(req, res) {
+    const { phase, day } = req.query;
+    var search = {};
+    if (phase !== undefined) {
+        search.act_phase = phase;
+    }
+    if (day !== undefined) {
+        search.act_day = day;
+    }
+    Activity.find(search, "_id")
+    .then((activities) => {
+        res.status(200).send({
+            status: "ok",
+            data: activities.map((activity) => {
+                return activityResource(activity);
+            })
+        });
+    })
+    .catch((err) => {
+        res.status(500).send({
+            status: "error",
+            message: "Activity index failed."
+        });
+        console.debug(err);
+    });
+}
+
+async function show(req, res) {
+    const { activityId } = req.params;
+    Activity.findOne({ _id: activityId })
+    .then((activity) => {
+        if (activity !== null) {
+            res.status(200).send({
+                status: "ok",
+                data: activityResource(activity)
+            });
+        } else {
+            res.status(404).send({
+                status: "error",
+                message: "Activity not found."
+            });
+        }
+    })
+    .catch((err) => {
+        res.status(500).send({
+            status: "error",
+            message: "Activity show failed."
+        });
+        console.debug(err);
+    });
+}
+
 async function store(req, res) {
     const {
         act_phase,
@@ -191,5 +243,7 @@ async function getActivtyToken(req, res) {
 
 module.exports = {
     store,
-    getActivtyToken
+    getActivtyToken,
+    show,
+    index
 }

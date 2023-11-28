@@ -7,20 +7,27 @@ const upload = multer({ dest: storageLoc });
 
 const {
     store,
-    getActivtyToken
+    getActivtyToken,
+    show,
+    index
 } = require("../controllers/activity.controller");
 
 const {
-    storeScoreboard
+    storeScoreboard,
+    retriveBestScore,
+    indexScoreboard
 } = require("../controllers/scoreboard.controller");
 
 const {
     validateActivityStore,
-    validateActivityToken
+    validateActivityToken,
+    validateActivityShow,
+    validateActivityIndex
 } = require("../validators/activity.validator");
 
 const {
-    validateScoreboardStore
+    validateScoreboardStore,
+    validateScoreboardBestScore
 } = require("../validators/scoreboard.validator");
 
 const { ensureAuth, ensureAuthActivity } = require("../middleware/user.auth");
@@ -42,6 +49,10 @@ api.post("/", upload.array('gallery'), ensureAuth, (req, res, next) => {
 }, validateActivityStore, store);
 
 api.get("/:activityId/admissions/:admissionId/token", ensureAuth, validateActivityToken, getActivtyToken);
+api.get("/:activityId", ensureAuth, validateActivityShow, show);
+api.get("/", ensureAuth, validateActivityIndex, index);
+api.get("/:activityId/admissions/:admissionId/bestscore", ensureAuth, validateScoreboardBestScore, retriveBestScore);
+api.get("/:activityId/admissions/:admissionId/scoreboards", ensureAuth, validateScoreboardBestScore, indexScoreboard);
 
 api.post("/:activityId/scoreboards", ensureAuthActivity, validateScoreboardStore, storeScoreboard);
 

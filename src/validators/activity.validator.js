@@ -136,7 +136,60 @@ const validateActivityToken = [
     }
 ];
 
+const validateActivityShow = [
+
+    check("activityId", "activityId field must be a valid ObjectId").isMongoId(),
+    //Check if activity exists
+    check("activityId").custom(
+        async (value, { req, loc, path }) => {
+            try {
+                const activity = await Activity.exists({ _id: req.params.activityId })
+                if (activity == null) {
+                    return Promise.reject("activityId is not registered");
+                }
+            } catch (error) {
+                // Handle the error
+                console.error("An error occurred:", error);
+                // You can choose to return a rejection or handle the error differently
+                return Promise.reject("DB error");
+            }
+        }
+    ),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
+const validateActivityIndex = [
+
+    //Check query phase is valid
+    check("phase").exists().optional(),
+    check("phase").isNumeric().optional(),
+    check("phase").isInt({ min: 1, max: 3 }).optional(),
+
+    //Check query day is valid
+    check("day").exists().optional(),
+    check("day").isNumeric().optional(),
+    check("day").isInt({ min: 1, max: 6 }).optional(),
+
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];
+
 module.exports = {
     validateActivityStore,
-    validateActivityToken
+    validateActivityToken,
+    validateActivityShow,
+    validateActivityIndex
 }

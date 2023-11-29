@@ -16,6 +16,7 @@ const stateRoutes = require("./src/routes/state.routes");
 const cityRoutes = require("./src/routes/city.routes");
 
 const app = express();
+app.use(express.static('uploads'));
 app.use(cors());
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());

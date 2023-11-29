@@ -30,3 +30,5 @@ connectToDatabase()
         console.log("Cannot connect to cluster. Log: ", err)
     }
 );
+
+module.exports = app;

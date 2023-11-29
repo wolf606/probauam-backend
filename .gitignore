@@ -226,7 +226,7 @@ $RECYCLE.BIN/
 !.yarn/versions
 
 # Multer temp files
-uploads/
+# uploads/
 
 # if you are NOT using Zero-installs, then:
 # comment the following lines

@@ -11,6 +11,7 @@ async function connectToDatabase() {
     .then(
         (msg) => {
             console.log("Connected to cluster.");
+            app.use(express.static('uploads'));
             app.listen(config.APP_PORT, '0.0.0.0', () => {
                 console.log("Server running on: ");
                 console.log(`${config.APP_URL}/api/v1/`)

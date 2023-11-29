@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 module.exports = {
+    PORT: process.env.PORT,
     SECRET_KEY: process.env.SECRET_KEY,
     APP_HOST: process.env.APP_HOST,
     APP_PORT: process.env.APP_PORT,

@@ -24,6 +24,7 @@ async function store(req, res) {
 
     if (pro_fecnac !== undefined) dict.pro_fecnac = pro_fecnac;
     if (pro_addres !== undefined) dict.pro_addres = pro_addres;
+    console.log("fucking req file",req.file);
     if (req.file) {
         const filePic = req.file;
         const avatar = {

@@ -17,7 +17,7 @@ const multer = require("multer");
 const storageLoc = 'uploads/avatar/';
 const upload = multer({ dest: storageLoc });
 
-api.post("/:id/profile", upload.single('avatar'), ensureAuth, (req, res, next) => {
+api.post("/:id/profile", upload.single('avatar'), (req, res, next) => {
     try {
         if (req.body.pro_addres !== undefined) {
             req.body.pro_addres = JSON.parse(req.body.pro_addres);
